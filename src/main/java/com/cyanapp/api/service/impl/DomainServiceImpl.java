@@ -50,7 +50,7 @@ public class DomainServiceImpl implements DomainService {
             }
             return result;
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid URL format!");
         }
     }
 
