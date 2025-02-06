@@ -1,6 +1,7 @@
 package com.cyanapp.api.service.impl;
 
 import com.cyanapp.api.enums.CategoryType;
+import com.cyanapp.api.exception.DomainCheckerException;
 import com.cyanapp.api.model.dto.DomainDto;
 import com.cyanapp.api.model.response.DomainStatistic;
 import com.cyanapp.api.model.response.GeneralStatistics;
@@ -37,16 +38,20 @@ public class DomainServiceImpl implements DomainService {
         String fqdn = URLUtil.getDomainFromUrl(url);
         if (fqdn != null && !fqdn.isEmpty()) {
             result.setDomain(fqdn);
-            var domain = domainRepository.findByDomain(fqdn);
-            if (domain.isPresent()) {
-                result.setCategory(domain.get().getCategory());
-                result.setBlocked(domain.get().getBlocked());
-                if (domain.get().getBlocked()) {
-                    increaseDomainHitCount(fqdn);
+            try {
+                var domain = domainRepository.findByDomain(fqdn);
+                if (domain.isPresent()) {
+                    result.setCategory(domain.get().getCategory());
+                    result.setBlocked(domain.get().getBlocked());
+                    if (domain.get().getBlocked()) {
+                        increaseDomainHitCount(fqdn);
+                    }
+                } else {
+                    result.setCategory(CategoryType.UNKNOWN);
+                    result.setBlocked(false);
                 }
-            } else {
-                result.setCategory(CategoryType.UNKNOWN);
-                result.setBlocked(false);
+            } catch (Exception ex) {
+                throw new DomainCheckerException("service unavailable, try again later");
             }
             return result;
         } else {

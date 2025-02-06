@@ -16,8 +16,8 @@ public class DomainCheckerExceptionHandler {
             DomainCheckerException exp) {
         GeneralExceptionResponse response = new GeneralExceptionResponse();
         response.setMessage(exp.getMessage());
-        response.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
